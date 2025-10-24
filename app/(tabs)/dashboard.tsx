@@ -1,45 +1,37 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { RecentActivityCard } from '@/components/dashboard/recent-activity-card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
-import { Card } from '@/components/ui/card';
-import { homeActivities } from '@/constants/mock-data';
+import { activitiesMock, accountInfo, dashboardActivityIds } from '@/constants/mock-data';
 
 export default function DashboardScreen() {
-  const router = useRouter();
-
-  const handleSelectActivity = (activityId: string) => {
-    router.push(`/activity/${activityId}`);
-  };
+  const recentActivities = dashboardActivityIds
+    .map((id) => activitiesMock.find((activity) => activity.id === id))
+    .filter((activity): activity is NonNullable<typeof activity> => Boolean(activity));
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.pageTitle}>Welcome back, PEPE</Text>
-        <Card>
-          <View style={styles.sectionHeading}>
-            <Text style={styles.sectionTitle}>Recent activity</Text>
-            <MaterialIcons name="history" size={22} color="rgba(17,17,17,0.6)" />
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.greetingTitle}>Welcome back, {accountInfo.displayName}</Text>
+            <Text style={styles.greetingSubtitle}>Recent activity</Text>
           </View>
-          <View style={styles.activityStack}>
-            {homeActivities.map((activity, index) => {
-              const isLast = index === homeActivities.length - 1;
-              return (
-                <View key={activity.id} style={!isLast && styles.activitySpacing}>
-                  <RecentActivityCard
-                    activity={activity}
-                    onPress={() => handleSelectActivity(activity.id)}
-                  />
-                </View>
-              );
-            })}
+          <View style={styles.avatar}>
+            <MaterialIcons name="person" size={24} color="#111111" />
           </View>
-        </Card>
+        </View>
+        <View style={styles.listContent}>
+          {recentActivities.map((activity) => (
+            <View key={activity.id} style={styles.cardSpacing}>
+              <RecentActivityCard activity={activity} />
+            </View>
+          ))}
+        </View>
       </ScrollView>
       <FloatingActionButton style={styles.fab}>
-        <MaterialIcons name="play-arrow" size={30} color="#ffffff" />
+        <MaterialIcons name="add" size={28} color="#ffffff" />
       </FloatingActionButton>
     </SafeAreaView>
   );
@@ -48,39 +40,51 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f7f7f7',
   },
   content: {
     paddingHorizontal: 20,
     paddingBottom: 120,
     paddingTop: 24,
   },
-  pageTitle: {
-    marginTop: 24,
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#111111',
-  },
-  sectionHeading: {
+  headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  sectionTitle: {
-    fontSize: 20,
+  greetingTitle: {
+    fontSize: 22,
     fontWeight: '700',
     color: '#111111',
   },
-  activityStack: {
-    marginTop: 12,
+  greetingSubtitle: {
+    marginTop: 6,
+    fontSize: 14,
+    color: 'rgba(17,17,17,0.6)',
   },
-  activitySpacing: {
-    marginBottom: 16,
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 18,
+    elevation: 8,
+  },
+  listContent: {
+    gap: 16,
+  },
+  cardSpacing: {
+    borderRadius: 24,
   },
   fab: {
     position: 'absolute',
-    right: 24,
-    bottom: 48,
+    alignSelf: 'center',
+    bottom: 32,
   },
 });

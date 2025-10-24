@@ -1,30 +1,36 @@
 import { memo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { DaySelection } from '@/types/home';
 
 interface DaySelectorProps {
   days: DaySelection[];
+  onToggleDay?: (id: string) => void;
 }
 
-export const DaySelector = memo(function DaySelector({ days }: DaySelectorProps) {
+export const DaySelector = memo(function DaySelector({ days, onToggleDay }: DaySelectorProps) {
+  const Wrapper = onToggleDay ? Pressable : View;
+
   return (
     <View style={styles.container}>
       {days.map((day, index) => {
         const isLast = index === days.length - 1;
         return (
-          <View
+          <Wrapper
             key={day.id}
             style={[
               styles.day,
               day.isActive ? styles.active : styles.inactive,
               !isLast && styles.daySpacing,
             ]}
+            accessibilityRole={onToggleDay ? 'button' : undefined}
+            accessibilityState={{ selected: day.isActive }}
+            onPress={onToggleDay ? () => onToggleDay(day.id) : undefined}
           >
-          <Text style={[styles.label, day.isActive ? styles.activeLabel : styles.inactiveLabel]}>
-            {day.label}
-          </Text>
-          </View>
+            <Text style={[styles.label, day.isActive ? styles.activeLabel : styles.inactiveLabel]}>
+              {day.label}
+            </Text>
+          </Wrapper>
         );
       })}
     </View>

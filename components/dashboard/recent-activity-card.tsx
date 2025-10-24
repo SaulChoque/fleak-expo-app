@@ -1,62 +1,55 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { memo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { HomeActivity } from '@/types/home';
+import { Activity } from '@/types/home';
 
 interface RecentActivityCardProps {
-  activity: HomeActivity;
-  onPress?: (activity: HomeActivity) => void;
+  activity: Activity;
 }
 
-export const RecentActivityCard = memo(function RecentActivityCard({ activity, onPress }: RecentActivityCardProps) {
-  const handlePress = () => {
-    onPress?.(activity);
-  };
-
+export const RecentActivityCard = memo(function RecentActivityCard({ activity }: RecentActivityCardProps) {
   return (
-    <Pressable onPress={handlePress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+    <View style={styles.container}>
       <View style={styles.iconBadge}>
-        <Text style={styles.iconLabel}>{resolveIconEmoji(activity.icon)}</Text>
+        <MaterialIcons name={activity.iconName} size={24} color="#ffffff" />
       </View>
       <View style={styles.detailColumn}>
         <Text style={styles.title}>{activity.title}</Text>
-        <Text style={styles.subtitle}>{activity.amountValue} {activity.amountUnit}</Text>
+        <View style={styles.metaRow}>
+          <MaterialIcons name="info" size={16} color="rgba(17,17,17,0.6)" style={styles.metaIcon} />
+          <Text style={[styles.amount, amountStyle(activity.amountKind)]}>{activity.amountLabel}</Text>
+        </View>
       </View>
-      <Text style={styles.time}>{activity.summaryTimeLabel}</Text>
-    </Pressable>
+      <Text style={styles.summaryLabel}>{activity.summaryLabel}</Text>
+    </View>
   );
 });
 
-function resolveIconEmoji(icon: string) {
-  switch (icon) {
-    case 'alarm':
-      return '⏰';
-    case 'public':
-      return '🌐';
-    case 'task':
-      return '✅';
+function amountStyle(kind: Activity['amountKind']) {
+  switch (kind) {
+    case 'credit':
+      return styles.amountCredit;
+    case 'debit':
+      return styles.amountDebit;
     default:
-      return '🔔';
+      return styles.amountNeutral;
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#ffffff',
     borderRadius: 24,
     paddingHorizontal: 20,
-    paddingVertical: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
+    paddingVertical: 16,
     shadowColor: '#0f172a',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.1,
-    shadowRadius: 32,
+    shadowRadius: 24,
     elevation: 10,
-  },
-  pressed: {
-    transform: [{ scale: 0.98 }],
-    opacity: 0.9,
   },
   iconBadge: {
     width: 44,
@@ -67,27 +60,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 16,
   },
-  iconLabel: {
-    fontSize: 20,
-    color: '#ffffff',
-  },
   detailColumn: {
     flex: 1,
-    marginRight: 16,
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: '#111111',
   },
-  subtitle: {
-    marginTop: 4,
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  metaIcon: {
+    marginRight: 6,
+  },
+  amount: {
     fontSize: 14,
+    fontWeight: '600',
+  },
+  amountCredit: {
+    color: '#111111',
+  },
+  amountDebit: {
+    color: '#d92d20',
+  },
+  amountNeutral: {
     color: 'rgba(17,17,17,0.6)',
   },
-  time: {
-    fontSize: 20,
+  summaryLabel: {
+    fontSize: 24,
     fontWeight: '700',
     color: '#111111',
+    fontVariant: ['tabular-nums'],
+    marginLeft: 16,
   },
 });
