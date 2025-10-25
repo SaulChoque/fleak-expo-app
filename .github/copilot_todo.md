@@ -1,0 +1,8 @@
+- [ ] Configure global Material UI theme for black & white palette.
+- [ ] Extend domain types and mocks to match UI data in reference images.
+- [ ] Update friend and finance feature components to render revised data and palette.
+- [ ] Refresh testimonies and account interfaces to align with mockups.
+- [ ] Verify lint/tests and document follow-up tidy-ups.
+- [ ] Update home activity card type selector and conditional sections per latest spec.
+- [ ] Implement camera capture flows for initial and final activity photos.
+- [ ] Add client-side validation for critical activity fields.
